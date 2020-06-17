@@ -42,7 +42,7 @@ check_ctcdecoder_version()
 # Graph Creation
 # ==============
 
-def variable_on_cpu(name, shape, initializer):
+def variable_on_cpu(name, shape, initializer, trainable):
     r"""
     Next we concern ourselves with graph creation.
     However, before we do so we must introduce a utility function ``variable_on_cpu()``
@@ -51,7 +51,7 @@ def variable_on_cpu(name, shape, initializer):
     # Use the /cpu:0 device for scoped operations
     with tf.device(Config.cpu_device):
         # Create or get apropos variable
-        var = tfv1.get_variable(name=name, shape=shape, initializer=initializer)
+        var = tfv1.get_variable(name=name, shape=shape, initializer=initializer, trainable=trainable)
     return var
 
 
@@ -75,10 +75,10 @@ def create_overlapping_windows(batch_x):
     return batch_x
 
 
-def dense(name, x, units, dropout_rate=None, relu=True):
+def dense(name, x, units, dropout_rate=None, relu=True, trainable=True):
     with tfv1.variable_scope(name):
-        bias = variable_on_cpu('bias', [units], tfv1.zeros_initializer())
-        weights = variable_on_cpu('weights', [x.shape[-1], units], tfv1.keras.initializers.VarianceScaling(scale=1.0, mode="fan_avg", distribution="uniform"))
+        bias = variable_on_cpu('bias', [units], tfv1.zeros_initializer(), trainable)
+        weights = variable_on_cpu('weights', [x.shape[-1], units], tfv1.keras.initializers.VarianceScaling(scale=1.0, mode="fan_avg", distribution="uniform"), trainable)
 
     output = tf.nn.bias_add(tf.matmul(x, weights), bias)
 
@@ -178,9 +178,9 @@ def create_model(batch_x, seq_length, dropout, reuse=False, batch_size=None, pre
 
     # The next three blocks will pass `batch_x` through three hidden layers with
     # clipped RELU activation and dropout.
-    layers['layer_1'] = layer_1 = dense('layer_1', batch_x, Config.n_hidden_1, dropout_rate=dropout[0])
-    layers['layer_2'] = layer_2 = dense('layer_2', layer_1, Config.n_hidden_2, dropout_rate=dropout[1])
-    layers['layer_3'] = layer_3 = dense('layer_3', layer_2, Config.n_hidden_3, dropout_rate=dropout[2])
+    layers['layer_1'] = layer_1 = dense('layer_1', batch_x, Config.n_hidden_1, dropout_rate=dropout[0], trainable=False)
+    layers['layer_2'] = layer_2 = dense('layer_2', layer_1, Config.n_hidden_2, dropout_rate=dropout[1], trainable=False)
+    layers['layer_3'] = layer_3 = dense('layer_3', layer_2, Config.n_hidden_3, dropout_rate=dropout[2], trainable=False)
 
     # `layer_3` is now reshaped into `[n_steps, batch_size, 2*n_cell_dim]`,
     # as the LSTM RNN expects its input to be of shape `[max_time, batch_size, input_size]`.
