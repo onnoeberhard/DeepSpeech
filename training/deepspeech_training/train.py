@@ -208,6 +208,9 @@ def create_model(batch_x, seq_length, dropout, reuse=False, batch_size=None, pre
     layer_6 = tf.reshape(layer_6, [-1, batch_size, Config.n_hidden_6], name='raw_logits')
     layers['raw_logits'] = layer_6
 
+    # Language identification layer
+    layers['layer_lang'] = layer_lang = dense('layer_lang', output, Config.n_hidden_5)
+
     # Output shape: [n_steps, batch_size, n_hidden_6]
     return layer_6, layers
 
