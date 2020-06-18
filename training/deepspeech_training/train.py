@@ -209,7 +209,7 @@ def create_model(batch_x, seq_length, dropout, reuse=False, batch_size=None, pre
     layers['raw_logits'] = layer_6
 
     # Language identification layer
-    layers['layer_lang'] = layer_lang = dense('layer_lang', output, Config.n_hidden_5)
+    layers['layer_lang'] = layer_lang = dense('layer_lang', output, Config.n_lang)
 
     # Output shape: [n_steps, batch_size, n_hidden_6]
     return layer_6, layers
