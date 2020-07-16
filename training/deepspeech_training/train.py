@@ -179,8 +179,8 @@ def create_model(batch_x, seq_length, dropout, reuse=False, batch_size=None, pre
     # The next three blocks will pass `batch_x` through three hidden layers with
     # clipped RELU activation and dropout.
     layers['layer_1'] = layer_1 = dense('layer_1', batch_x, Config.n_hidden_1, dropout_rate=dropout[0], trainable=False)
-    layers['layer_2'] = layer_2 = dense('layer_2', layer_1, Config.n_hidden_2, dropout_rate=dropout[1], trainable=False)
-    layers['layer_3'] = layer_3 = dense('layer_3', layer_2, Config.n_hidden_3, dropout_rate=dropout[2], trainable=False)
+    layers['layer_2'] = layer_2 = dense('layer_2', layer_1, Config.n_hidden_2, dropout_rate=dropout[1])
+    layers['layer_3'] = layer_3 = dense('layer_3', layer_2, Config.n_hidden_3, dropout_rate=dropout[2])
 
     # `layer_3` is now reshaped into `[n_steps, batch_size, 2*n_cell_dim]`,
     # as the LSTM RNN expects its input to be of shape `[max_time, batch_size, input_size]`.
