@@ -126,7 +126,8 @@ def rnn_impl_cudnn_rnn(x, seq_length, previous_state, _):
         rnn_impl_cudnn_rnn.cell = fw_cell
 
     output, output_state = rnn_impl_cudnn_rnn.cell(inputs=x,
-                                                   sequence_lengths=seq_length)
+                                                   sequence_lengths=seq_length,
+                                                   training=False)
 
     return output, output_state
 
