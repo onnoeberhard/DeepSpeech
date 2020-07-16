@@ -126,8 +126,7 @@ def rnn_impl_cudnn_rnn(x, seq_length, previous_state, _):
         rnn_impl_cudnn_rnn.cell = fw_cell
 
     output, output_state = rnn_impl_cudnn_rnn.cell(inputs=x,
-                                                   sequence_lengths=seq_length,
-                                                   training=False)
+                                                   sequence_lengths=seq_length)
 
     return output, output_state
 
@@ -198,7 +197,7 @@ def create_model(batch_x, seq_length, dropout, reuse=False, batch_size=None, pre
     layers['rnn_output_state'] = output_state
 
     # Now we feed `output` to the fifth hidden layer with clipped RELU activation
-    layers['layer_5'] = layer_5 = dense('layer_5', output, Config.n_hidden_5, dropout_rate=dropout[5])
+    layers['layer_5'] = layer_5 = dense('layer_5', output, Config.n_hidden_5, dropout_rate=dropout[5], trainable=False)
 
     # Now we apply a final linear layer creating `n_classes` dimensional vectors, the logits.
     layers['layer_6'] = layer_6 = dense('layer_6', layer_5, Config.n_hidden_6, relu=False)
